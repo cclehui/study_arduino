@@ -1,8 +1,8 @@
 //超声波demo程序： https://www.w3cschool.cn/arduino/arduino_ultrasonic_sensor.html
 
 
-const int pingPin = 9; // Trigger Pin of Ultrasonic Sensor
-const int echoPin = 8; // Echo Pin of Ultrasonic Sensor
+const int pingPin = 11; // Trigger Pin of Ultrasonic Sensor
+const int echoPin = 12; // Echo Pin of Ultrasonic Sensor
 int outputPin = 5;
 int outputValue = 0;
 
@@ -25,6 +25,7 @@ void loop() {
    Serial.println(11111);
    
    duration = pulseIn(echoPin, HIGH);
+   Serial.println(duration);
    inches = microsecondsToInches(duration);
    cm = microsecondsToCentimeters(duration);
 
@@ -34,7 +35,7 @@ void loop() {
        outputValue = cm;
    }
 
-   analogWrite(outputPin, outputValue);
+   //analogWrite(outputPin, outputValue);
    
    Serial.print(inches);
    Serial.print("in, ");
