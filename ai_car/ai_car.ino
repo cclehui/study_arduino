@@ -132,7 +132,7 @@ void loop() {
   if (stop) {
     analogWrite(MotoBIn1, 0);
     analogWrite(MotoBIn2, 0);
-  analogWrite(MotoAIn1, 0);
+	analogWrite(MotoAIn1, 0);
     analogWrite(MotoAIn2, 0);
     return;  
   }
