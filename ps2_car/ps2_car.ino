@@ -37,16 +37,21 @@ byte vibrate = 0;
 
 
 //电机相关定义
-int MotoBIn1 = 3; // MotoBIn1 
-int MotoBIn2 = 5; //MotoBIn2
-int MotoAIn1 = 6; // MotoAIn1 
-int MotoAIn2 = 9; //MotoAIn2
+int MotoAIn1 = 3; // MotoAIn1 
+int MotoAIn2 = 5; //MotoAIn2
+int MotoBIn1 = 6; // MotoBIn1 
+int MotoBIn2 = 9; //MotoBIn2
+
+const int maxValue = 255;
+const int minValue = 0;
+
+int badLoopCount = 0;
 
 
 void setup() {
 
- //Serial.begin(57600);
-  Serial.begin(115200);
+ Serial.begin(57600);
+  //Serial.begin(115200);
 
   //配置 ps2 手柄
   bool rs = false;
@@ -83,26 +88,54 @@ void loop() {
       return;  
   }
 
+  int highLevel = 255;
 
-  if(ps2x.Button(PSB_L1) || ps2x.Button(PSB_R1)) { //print stick values if either is TRUE
-      Serial.print("Stick Values:");
-      Serial.print(ps2x.Analog(PSS_LY), DEC); //Left stick, Y axis. Other options: LX, RY, RX  
-      Serial.print(",");
-      Serial.print(ps2x.Analog(PSS_LX), DEC); 
-      Serial.print(",");
-      Serial.print(ps2x.Analog(PSS_RY), DEC); 
-      Serial.print(",");
-      Serial.println(ps2x.Analog(PSS_RX), DEC); 
-    }
+  bool isBadInfo = false;
 
-/*
-    analogWrite(MotoBIn1, highLevel);
-    analogWrite(MotoBIn2, 0);
+  int leftXValue = 127;
+  int leftYValue = 127;
+  int rightXValue = 127;
+  int rightYValue = 127;
   
-    analogWrite(MotoAIn1, highLevel);
-    analogWrite(MotoAIn2, 0);
-*/
+  ps2x.read_gamepad(false, vibrate); //read controller and set large motor to spin at 'vibrate' speed
+  if(ps2x.Button(PSB_L1) || ps2x.Button(PSB_R1)) { //print stick values if either is TRUE
 
+      leftXValue = (uint8_t)ps2x.Analog(PSS_LX);
+      leftYValue = (uint8_t) ps2x.Analog(PSS_LY);
+
+      rightXValue = (uint8_t)ps2x.Analog(PSS_RX);
+      rightYValue = (uint8_t)ps2x.Analog(PSS_RY);
+
+      if (leftXValue == maxValue && leftYValue == maxValue &&
+        rightXValue == maxValue && rightYValue == maxValue ) {
+          isBadInfo = true;
+             
+      } else {
+          Serial.print("Stick Values:");
+          Serial.print(leftXValue);
+          Serial.print(",");
+          Serial.print(leftYValue); 
+          Serial.print(",");
+          Serial.print(rightXValue); 
+          Serial.print(",");
+          Serial.println(rightYValue); 
+      }
+
+    }
+    
+    if (isBadInfo){
+      stopMotoA();
+      stopMotoB();
+      
+    } else {
+      
+      //电机
+      analogWrite(MotoAIn2, motoAForwardValue(leftYValue));
+      analogWrite(MotoAIn1, motoABackwardValue(leftYValue));
+
+      analogWrite(MotoBIn1, motoAForwardValue(rightYValue));
+      analogWrite(MotoBIn2, motoABackwardValue(rightYValue));
+    }
 
   delay(50);
 

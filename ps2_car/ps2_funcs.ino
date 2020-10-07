@@ -1,5 +1,12 @@
 
 
+bool isMiddleValue(int value) {
+     if(value == 127 || value == 128) {
+        return true; 
+    }
+    return false;
+}
+
 //配置ps2 手柄
 bool configPs2() {
    delay(500);  //added delay to give wireless ps2 module some time to startup, before configuring it
