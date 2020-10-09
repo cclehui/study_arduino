@@ -122,13 +122,14 @@ void loop() {
       }
 
     }
-    
+     
     if (isBadInfo){
       stopMotoA();
       stopMotoB();
       
     } else {
-      
+
+      //Serial.println(motoAForwardValue(leftYValue));
       //电机
       analogWrite(MotoAIn2, motoAForwardValue(leftYValue));
       analogWrite(MotoAIn1, motoABackwardValue(leftYValue));
